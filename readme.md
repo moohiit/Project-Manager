@@ -1,5 +1,87 @@
 # Project Management Tool
 
+## Setup Instructions
+
+### Backend Setup
+
+1. **Clone the repository**  
+  ```bash
+  git clone <repo-url>
+  cd backend
+  ```
+
+2. **Install dependencies**  
+  ```bash
+  npm install
+  ```
+
+3. **Configure environment variables**  
+  - Copy `.env.example` to `.env` and update values as needed (MongoDB URI, JWT secret, etc).
+
+4. **Run the backend server**  
+  ```bash
+  npm run dev
+  ```
+  The backend will start on the configured port (default: 5000).
+
+### Frontend Setup
+
+1. **Navigate to the frontend directory**  
+  ```bash
+  cd ../frontend
+  ```
+
+2. **Install dependencies**  
+  ```bash
+  npm install
+  ```
+
+3. **Configure environment variables**  
+  - Copy `.env.example` to `.env` and update API endpoint if needed.
+
+4. **Run the frontend app**  
+  ```bash
+  npm start
+  ```
+  The frontend will start on the configured port (default: 3000).
+
+### Running Seeders
+
+- To populate the database with test data, run the seed script from the backend directory:
+  ```bash
+  npm run seed
+  ```
+  This will create a test user, two sample projects, and three tasks per project.
+
+---
+
+## Feature List
+
+- User registration and login with JWT authentication (HTTP-only cookies)
+- Project CRUD: create, update, delete, and view projects
+- Task management within projects (CRUD)
+- Pagination and search for project lists
+- Task filtering by status (todo, in-progress, done)
+- Responsive UI with Tailwind CSS
+- Protected routes for authenticated users
+- Form validation using React Hook Form and Yup
+- Lazy loading for improved performance
+- Custom 404 Not Found page
+- State management with Redux
+
+---
+
+## Known Limitations
+
+- No email verification or password reset functionality
+- No role-based access control (all users have the same permissions)
+- File uploads (attachments) are not supported
+- Docker support is optional and not included by default
+- No real-time updates (e.g., via websockets)
+- Limited error handling and logging in production
+
+--- Project Management Tool
+
 ## Project Description
 
 This is a basic **Project Management Tool** built using the **MERN stack** with the following technologies:
