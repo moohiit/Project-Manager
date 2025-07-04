@@ -21,13 +21,15 @@ export const createProject = async (req, res) => {
 // Get All Projects (User-Specific) with Pagination and Search
 export const getUserProjects = async (req, res) => {
   try {
-    const { page = 1, limit = 5, search = '' } = req.query;
+    const { page = 1, limit = 5, search = '',status } = req.query;
 
     const query = {
-      createdBy: req.user._id,
+      user: req.user._id,
       title: { $regex: search, $options: 'i' }, // case-insensitive search
     };
-
+    if (status) {
+      query.status = status;
+    }
     const total = await Project.countDocuments(query);
 
     const projects = await Project.find(query)
@@ -47,7 +49,25 @@ export const getUserProjects = async (req, res) => {
   }
 };
 
+//get project by id
+export const getProjectById = async (req, res) => {
+  try {
+    const project = await Project.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
 
+    if (!project) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
+    }
+
+    res.json({ success: true, project });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 // Update Project
 export const updateProject = async (req, res) => {

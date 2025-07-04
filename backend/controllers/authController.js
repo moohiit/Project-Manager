@@ -20,7 +20,11 @@ export const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    const token = generateToken(user._id);
+    const token = generateToken({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    });
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -53,7 +57,11 @@ export const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
-    const token = generateToken(user._id);
+    const token = generateToken({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    });
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -61,9 +69,12 @@ export const loginUser = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
       token,
     });
   } catch (error) {

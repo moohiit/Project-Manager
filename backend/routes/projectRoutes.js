@@ -2,6 +2,7 @@ import express from "express";
 import {
   createProject,
   getUserProjects,
+  getProjectById,
   updateProject,
   deleteProject,
 } from "../controllers/projectController.js";
@@ -11,6 +12,10 @@ const router = express.Router();
 
 // Protected Routes
 router.route("/").post(protect, createProject).get(protect, getUserProjects);
-router.route("/:id").put(protect, updateProject).delete(protect, deleteProject);
+router
+  .route("/:id")
+  .get(protect, getProjectById)
+  .put(protect, updateProject)
+  .delete(protect, deleteProject);
 
 export default router;

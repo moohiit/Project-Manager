@@ -5,7 +5,7 @@ import type { JSX } from 'react';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user } = useSelector((state: RootState) => state.auth as { user: unknown });
-
+  // console.log("user protected:", user)
   return user ? children : <Navigate to="/login" />;
 };
 
