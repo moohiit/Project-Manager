@@ -21,36 +21,32 @@ export const createProject = async (req, res) => {
 // Get All Projects (User-Specific) with Pagination and Search
 export const getUserProjects = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 5;
-    const keyword = req.query.search
-      ? { title: { $regex: req.query.search, $options: 'i' } }
-      : {};
+    const { page = 1, limit = 5, search = '' } = req.query;
 
-    const total = await Project.countDocuments({
-      ...keyword,
-      user: req.user._id,
-    });
+    const query = {
+      createdBy: req.user._id,
+      title: { $regex: search, $options: 'i' }, // case-insensitive search
+    };
 
-    const projects = await Project.find({
-      ...keyword,
-      user: req.user._id,
-    })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .sort({ createdAt: -1 });
+    const total = await Project.countDocuments(query);
+
+    const projects = await Project.find(query)
+      .sort({ createdAt: -1 })
+      .limit(Number(limit))
+      .skip((Number(page) - 1) * Number(limit));
 
     res.json({
       success: true,
       projects,
-      page,
-      totalPages: Math.ceil(total / limit),
-      totalProjects: total,
+      total,
+      page: Number(page),
+      totalPages: Math.ceil(total / Number(limit)),
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Failed to fetch projects' });
   }
 };
+
 
 
 // Update Project

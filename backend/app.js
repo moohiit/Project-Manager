@@ -4,12 +4,25 @@ import authRoutes from "./routes/authRoutes.js";
 import projectRoutes  from "./routes/projectRoutes.js"
 import taskRoutes from "./routes/taskRoutes.js";
 import { errorHandler } from "./middlewares/errorMiddleware.js";
+import cookieParser from 'cookie-parser';
+
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: [
+    process.env.CLIENT_URL,
+    'http://localhost:5173',
+    'http://172.16.1.2:5173'
+  ],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 
 // Routes

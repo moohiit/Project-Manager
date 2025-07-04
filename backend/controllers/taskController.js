@@ -34,21 +34,20 @@ export const createTask = async (req, res) => {
 // Get Tasks by Project
 export const getTasksByProject = async (req, res) => {
   try {
-    const project = await Project.findOne({
-      _id: req.params.projectId,
-      user: req.user._id,
-    });
-    if (!project) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Project not found" });
+    const { projectId } = req.params;
+    const { status } = req.query;
+
+    const query = { projectId };
+
+    if (status) {
+      query.status = status;
     }
 
-    const tasks = await Task.find({ project: project._id });
+    const tasks = await Task.find(query).sort({ createdAt: -1 });
 
     res.json({ success: true, tasks });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: 'Failed to fetch tasks' });
   }
 };
 

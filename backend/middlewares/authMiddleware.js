@@ -4,8 +4,16 @@ import User from "../models/userModel.js";
 export const protect = async (req, res, next) => {
   try {
     // Read token from cookies
-    const token = req.cookies.token;
-
+    let token = null;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    } else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    }
+    console.log("token:", token);
     if (!token) {
       return res
         .status(401)
@@ -26,6 +34,7 @@ export const protect = async (req, res, next) => {
 
     next();
   } catch (error) {
+    console.log(error);
     return res
       .status(401)
       .json({ success: false, message: "Not authorized, token failed" });

@@ -9,7 +9,9 @@ export const registerUser = async (req, res) => {
   try {
     const userExists = await User.findOne({ email });
     if (userExists)
-      return res.status(400).json({ success:false, message: "User already exists" });
+      return res
+        .status(400)
+        .json({ success: false, message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -18,7 +20,13 @@ export const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
-
+    const token = generateToken(user._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
     res.status(201).json({
       success: true,
       user: {
@@ -26,7 +34,7 @@ export const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
       },
-      token: generateToken(user._id),
+      token,
     });
   } catch (error) {
     console.error(error);
@@ -45,15 +53,41 @@ export const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
-
+    const token = generateToken(user._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id),
+      token,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+// Get User Profile
+export const getProfile = async (req, res) => {
+  res.json({
+    success: true,
+    _id: req.user._id,
+    name: req.user.name,
+    email: req.user.email,
+  });
+};
+
+// Logout User
+export const logoutUser = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  res.json({ success: true, message: "Logged out successfully" });
 };
