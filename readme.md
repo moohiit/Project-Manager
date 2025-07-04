@@ -6,7 +6,7 @@
 
 1. **Clone the repository**  
   ```bash
-  git clone <repo-url>
+  git clone https://github.com/moohiit/Project-Manager.git
   cd backend
   ```
 
