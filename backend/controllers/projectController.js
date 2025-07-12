@@ -111,10 +111,11 @@ export const deleteProject = async (req, res) => {
         .json({ success: false, message: "Project not found" });
     }
 
-    await project.remove();
+    await project.deleteOne();
 
     res.json({ success: true, message: "Project deleted" });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ success: false, message: "Server error" });
   }
 };

@@ -36,8 +36,8 @@ const DashboardPage = () => {
         url += `&status=${statusFilter}`;
       }
       const response = await axiosInstance.get(url);
-      setProjects(response.data.projects);
-      setTotalPages(response.data.totalPages);
+      setProjects(response.data?.projects || []);
+      setTotalPages(response.data?.totalPages);
     } catch (error) {
       console.error("Error fetching projects");
     } finally {
@@ -49,6 +49,21 @@ const DashboardPage = () => {
     fetchProjects();
     // eslint-disable-next-line
   }, [page, statusFilter]);
+
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this project?");
+    if (!confirmDelete) return;
+
+    try {
+      await axiosInstance.delete(`/projects/${id}`);
+      // After deletion, refresh project list
+      fetchProjects();
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      alert("Failed to delete project. Please try again.");
+    }
+  };
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,13 +146,12 @@ const DashboardPage = () => {
                   {project.title}
                 </h2>
                 <span
-                  className={`px-2 py-1 text-xs rounded-full ${
-                    project.status === "active"
-                      ? "bg-green-900 text-green-300"
-                      : project.status === "pending"
+                  className={`px-2 py-1 text-xs rounded-full ${project.status === "active"
+                    ? "bg-green-900 text-green-300"
+                    : project.status === "pending"
                       ? "bg-yellow-900 text-yellow-300"
                       : "bg-gray-700 text-gray-300"
-                  }`}
+                    }`}
                 >
                   {project.status}
                 </span>
@@ -150,7 +164,7 @@ const DashboardPage = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => navigate(`/tasks/${project._id}`)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 min-w-[100px] whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   View Tasks
                 </button>
@@ -160,7 +174,14 @@ const DashboardPage = () => {
                 >
                   Edit
                 </button>
+                <button
+                  onClick={() => handleDelete(project._id)}
+                  className="flex-1 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Delete
+                </button>
               </div>
+
             </div>
           ))}
         </div>
@@ -171,11 +192,10 @@ const DashboardPage = () => {
         <div className="flex justify-center items-center mt-10 gap-4">
           <button
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            className={`flex items-center gap-1 px-4 py-2 rounded-lg ${
-              page === 1
-                ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                : "bg-gray-700 hover:bg-gray-600 text-white"
-            }`}
+            className={`flex items-center gap-1 px-4 py-2 rounded-lg ${page === 1
+              ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+              : "bg-gray-700 hover:bg-gray-600 text-white"
+              }`}
             disabled={page === 1}
           >
             <ChevronLeft size={18} />
@@ -186,11 +206,10 @@ const DashboardPage = () => {
 
           <button
             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-            className={`flex items-center gap-1 px-4 py-2 rounded-lg ${
-              page === totalPages
-                ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                : "bg-gray-700 hover:bg-gray-600 text-white"
-            }`}
+            className={`flex items-center gap-1 px-4 py-2 rounded-lg ${page === totalPages
+              ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+              : "bg-gray-700 hover:bg-gray-600 text-white"
+              }`}
             disabled={page === totalPages}
           >
             Next
