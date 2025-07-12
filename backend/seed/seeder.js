@@ -7,10 +7,10 @@ import Task from "../models/taskModel.js";
 import connectDB from "../config/db.js";
 
 dotenv.config();
-connectDB();
 
 const seedData = async () => {
   try {
+    await connectDB();
     // Clear existing data
     await User.deleteMany();
     await Project.deleteMany();
