@@ -99,7 +99,7 @@ const DashboardPage = () => {
               }}
               className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white appearance-none"
             >
-              {statusFilters.map((filter) => (
+              {statusFilters?.map((filter) => (
                 <option key={filter} value={filter}>
                   {filter.charAt(0).toUpperCase() + filter.slice(1)}
                 </option>
@@ -128,7 +128,7 @@ const DashboardPage = () => {
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
-      ) : projects.length === 0 ? (
+      ) : projects?.length === 0 ? (
         <div className="bg-gray-800 rounded-lg p-8 text-center">
           <p className="text-gray-400">
             No projects found. Create your first project!
@@ -136,7 +136,7 @@ const DashboardPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
+          {projects?.map((project) => (
             <div
               key={project._id}
               className="bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-blue-500 transition-colors"
