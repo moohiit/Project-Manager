@@ -92,6 +92,7 @@ const DashboardPage = () => {
           <div className="relative flex items-center">
             <Filter className="absolute left-3 text-gray-400" size={18} />
             <select
+              aria-label="Filter projects by status"
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
